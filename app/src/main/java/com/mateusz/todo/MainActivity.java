@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -21,7 +22,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private List<ToDo> todos = new ArrayList<>();
-    private LinearLayout linearLayout;
+    private LinearLayout contentLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initFields() {
-        linearLayout = findViewById(R.id.contentLayout);
+        contentLayout = findViewById(R.id.contentLayout);
     }
 
     private void initData() {
@@ -65,13 +66,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         int index = 0;
-        linearLayout.removeAllViews();
+        contentLayout.removeAllViews();
         for(ToDo toDo: todos){
-            final View frame = getLayoutInflater().inflate(R.layout.activity_main, null);
+            final View frame = getLayoutInflater().inflate(R.layout.todo_list_frame, null);
             TextView toDoName = frame.findViewById(R.id.toDoName);
             toDoName.setText(toDo.getName());
             frame.setId(index);
-            linearLayout.addView(frame);
+            contentLayout.addView(frame);
             index++;
         }
     }
