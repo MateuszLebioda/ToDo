@@ -3,6 +3,8 @@ package com.mateusz.todo;
 import com.mateusz.todo.activity.AddNewTodo;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
@@ -66,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
             });
 
             TextView toDoName = frame.findViewById(R.id.toDoName);
+            if(toDo.isPriority()){
+                toDoName.setTextColor(Color.BLACK);
+                toDoName.setTypeface(null, Typeface.BOLD);
+            }
             frame.findViewById(R.id.isDone).setOnClickListener(v -> {
                 dataManager.markAsDone(toDo);
                 initView();
