@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.widget.Button;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -42,12 +42,40 @@ public class AddNewTodo extends AppCompatActivity implements DatePickerDialog.On
     private ImageButton clearHour;
     private CheckBox priorityCheckBox;
 
+    private FloatingActionButton submitEditedToDoButton;
+    private FloatingActionButton submitDeleteToDoButton;
+
+    private Mode mode;
+    private ToDo editingToDo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_todo);
 
+        mode = (Mode)getIntent().getSerializableExtra("mode");
+
         initFields();
+
+        if(mode == Mode.EDIT){
+            editingToDo = (ToDo) getIntent().getSerializableExtra("todo");
+            initEditingModeData();
+        }
+    }
+
+    private void initEditingModeData(){
+        if(editingToDo.getTerm() != null){
+            deadlineTime = editingToDo.getTerm().toLocalTime();
+            editTextHour.setText(deadlineTime.toString());
+
+            deadlineDate = editingToDo.getTerm().toLocalDate();
+            editTextDate.setText(deadlineDate.toString());
+        }
+
+        priorityCheckBox.setChecked(editingToDo.isPriority());
+
+        nameText.setText(editingToDo.getName());
+
     }
 
     private void initFields() {
@@ -66,26 +94,30 @@ public class AddNewTodo extends AppCompatActivity implements DatePickerDialog.On
             clearDate.setClickable(false);
         });
 
-        submitNewToDoButton = findViewById(R.id.submitNewToDoButton);
-        submitNewToDoButton.setOnClickListener(v -> {
+        if(mode == Mode.ADD) {
+            submitNewToDoButton = findViewById(R.id.submitNewToDoButton);
+            submitNewToDoButton.setVisibility(View.VISIBLE);
+            submitNewToDoButton.setOnClickListener(v -> {
+                submitElement();
+            });
+        }
 
-            LocalDateTime term = null;
+        if(mode == Mode.EDIT) {
+            submitEditedToDoButton = findViewById(R.id.submitEditedToDoButton);
+            submitEditedToDoButton.setVisibility(View.VISIBLE);
+            submitEditedToDoButton.setOnClickListener(v -> {
+                submitElement();
+            });
+            submitDeleteToDoButton = findViewById(R.id.submitDeleteToDoButton);
+            submitDeleteToDoButton.setVisibility(View.VISIBLE);
+            submitDeleteToDoButton.setOnClickListener(v -> {
+                dataManager.removeToDo(editingToDo);
+                Toast.makeText(this, "Pomyślnie usunięto element", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+            });
+        }
 
-            if(deadlineDate != null && deadlineTime != null){
-                term = LocalDateTime.of(deadlineDate, deadlineTime);
-            }else if(deadlineDate != null){
-                term = LocalDateTime.of(deadlineDate, LocalTime.of(0,0,0));
-            }
-
-            ToDo toDo = ToDo.builder().name(nameText.getText().toString()).priority(priorityCheckBox.isChecked()).term(term).build();
-            dataManager.addToDo(toDo);
-
-            Toast.makeText(this, "Pomyślnie dodano zadanie", Toast.LENGTH_SHORT).show();
-
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-
-        });
 
         priorityCheckBox = findViewById(R.id.priorityCheckBox);
 
@@ -98,11 +130,7 @@ public class AddNewTodo extends AppCompatActivity implements DatePickerDialog.On
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length()>0){
-                    submitNewToDoButton.setEnabled(true);
-                }else{
-                    submitNewToDoButton.setEnabled(false);
-                }
+                validSubmitButton(s);
             }
 
             @Override
@@ -110,7 +138,6 @@ public class AddNewTodo extends AppCompatActivity implements DatePickerDialog.On
 
             }
         });
-
 
 
         editTextDate = findViewById(R.id.editTextDate);
@@ -133,7 +160,41 @@ public class AddNewTodo extends AppCompatActivity implements DatePickerDialog.On
             TimePickerDialog timePickerDialog = new TimePickerDialog(this, this, time.getHour() + 2 , time.getMinute(), true);
             timePickerDialog.show();
         });
+    }
 
+    private void validSubmitButton(CharSequence s){
+        FloatingActionButton button = mode == Mode.ADD ? submitNewToDoButton : submitEditedToDoButton;
+        if(s.length()>0){
+            button.setEnabled(true);
+        }else{
+            button.setEnabled(false);
+        }
+    }
+
+    private void submitElement(){
+
+        LocalDateTime term = null;
+
+        if(deadlineDate != null && deadlineTime != null){
+            term = LocalDateTime.of(deadlineDate, deadlineTime);
+        }else if(deadlineDate != null){
+            term = LocalDateTime.of(deadlineDate, LocalTime.of(0,0,0));
+        }
+        ToDo toDo = ToDo.builder().name(nameText.getText().toString()).priority(priorityCheckBox.isChecked()).term(term).build();
+        dataManager.addToDo(toDo);
+        if(editingToDo != null){
+            dataManager.removeToDo(editingToDo);
+        }
+
+        if(mode == Mode.ADD){
+            Toast.makeText(this, "Pomyślnie dodano element", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this, "Pomyślnie edytowano element", Toast.LENGTH_SHORT).show();
+        }
+
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
 
     }
 

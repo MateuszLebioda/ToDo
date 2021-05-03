@@ -2,6 +2,7 @@ package com.mateusz.todo.model;
 
 import org.threeten.bp.LocalDateTime;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -11,7 +12,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class ToDo implements Comparable {
+public class ToDo implements Comparable, Serializable {
     private String name;
     private LocalDateTime created;
     private LocalDateTime term;
@@ -30,9 +31,9 @@ public class ToDo implements Comparable {
             if(this.priority && toDo.priority){
                 return this.name.toLowerCase().compareTo(toDo.name.toLowerCase());
             }else if(this.priority){
-                return 1;
+                return -1;
             }else if(toDo.priority){
-                return 0;
+                return 1;
             }else {
                 return this.name.toLowerCase().compareTo(toDo.name.toLowerCase());
             }
@@ -53,14 +54,16 @@ public class ToDo implements Comparable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ToDo toDo = (ToDo) o;
-        return Objects.equals(name, toDo.name) &&
-                Objects.equals(created, toDo.created);
+        return done == toDo.done &&
+                priority == toDo.priority &&
+                Objects.equals(name, toDo.name) &&
+                Objects.equals(created, toDo.created) &&
+                Objects.equals(term, toDo.term) &&
+                Objects.equals(attachment, toDo.attachment);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, created);
+        return Objects.hash(name, created, term, done, priority, attachment);
     }
-
-
 }
