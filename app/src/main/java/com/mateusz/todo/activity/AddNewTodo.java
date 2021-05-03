@@ -89,6 +89,9 @@ public class AddNewTodo extends AppCompatActivity implements DatePickerDialog.On
 
         clearDate = findViewById(R.id.clearDate);
         clearDate.setOnClickListener(v -> {
+            editTextHour.setText("");
+            deadlineTime = null;
+            clearHour.setClickable(false);
             editTextDate.setText("");
             deadlineDate = null;
             clearDate.setClickable(false);
@@ -144,7 +147,6 @@ public class AddNewTodo extends AppCompatActivity implements DatePickerDialog.On
         editTextDate.setShowSoftInputOnFocus(false);
 
         editTextDate.setOnClickListener(v -> {
-
             LocalDate date = LocalDate.now();
             DatePickerDialog dataDialog = new DatePickerDialog(this, this,
                     date.getYear(), date.getMonthValue() - 1,
@@ -156,9 +158,13 @@ public class AddNewTodo extends AppCompatActivity implements DatePickerDialog.On
         editTextHour.setShowSoftInputOnFocus(false);
 
         editTextHour.setOnClickListener(v -> {
-            LocalTime time = LocalTime.now();
-            TimePickerDialog timePickerDialog = new TimePickerDialog(this, this, time.getHour() + 2 , time.getMinute(), true);
-            timePickerDialog.show();
+            if(deadlineDate == null){
+                Toast.makeText(this, "Najpierw uzupełnij pole Data!", Toast.LENGTH_SHORT).show();
+            }else {
+                LocalTime time = LocalTime.now();
+                TimePickerDialog timePickerDialog = new TimePickerDialog(this, this, time.getHour() + 2, time.getMinute(), true);
+                timePickerDialog.show();
+            }
         });
     }
 
