@@ -2,6 +2,8 @@ package com.mateusz.todo.model;
 
 import org.threeten.bp.LocalDateTime;
 
+import java.util.Objects;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -26,5 +28,19 @@ public class ToDo {
             created(LocalDateTime.now());
             return super.build();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ToDo toDo = (ToDo) o;
+        return Objects.equals(name, toDo.name) &&
+                Objects.equals(created, toDo.created);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, created);
     }
 }
