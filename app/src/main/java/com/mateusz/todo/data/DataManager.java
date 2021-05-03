@@ -3,6 +3,7 @@ package com.mateusz.todo.data;
 import com.mateusz.todo.model.ToDo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DataManager {
@@ -15,12 +16,16 @@ public class DataManager {
     public static DataManager getInstance(){
         if (instance == null) {
             instance = new DataManager();
+            for (int i = 0; i <= 4; i++) {
+                instance.addToDo(ToDo.builder().name("Przykładowe zadanie numer " + i).build());
+            }
         }
         return instance;
     }
 
     public List<ToDo> getToDos() {
-        return new ArrayList<>(toDos);
+        Collections.sort(this.toDos, ToDo::compareTo);
+        return this.toDos;
     }
 
     public List<ToDo> addToDo(ToDo toDo){

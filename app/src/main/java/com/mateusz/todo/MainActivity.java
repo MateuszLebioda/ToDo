@@ -1,29 +1,25 @@
 package com.mateusz.todo;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
+import com.mateusz.todo.activity.AddNewTodo;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.mateusz.todo.data.DataManager;
 import com.mateusz.todo.model.ToDo;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-     private LinearLayout contentLayout;
+    private LinearLayout contentLayout;
     private DataManager dataManager = DataManager.getInstance();
+    private FloatingActionButton addNewToDoButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,19 +32,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void initFields() {
         contentLayout = findViewById(R.id.contentLayout);
+        addNewToDoButton = findViewById(R.id.addNewToDoButton);
+        addNewToDoButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, AddNewTodo.class);
+            startActivity(intent);
+        });
     }
 
     private void initData() {
-        for(int i =0; i<=20 ; i++){
-            dataManager.addToDo(ToDo.builder().name("Przykładowe zadanie numer " + i).build());
-        }
+
 
     }
 
     private void initView() {
         int index = 0;
         contentLayout.removeAllViews();
-        for(ToDo toDo: dataManager.getToDos()){
+        for (ToDo toDo : dataManager.getToDos()) {
             final View frame = getLayoutInflater().inflate(R.layout.todo_list_frame, null);
             TextView toDoName = frame.findViewById(R.id.toDoName);
             toDoName.setText(toDo.getName());
@@ -57,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
             index++;
         }
     }
-
 
 
 }
