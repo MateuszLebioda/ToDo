@@ -9,6 +9,7 @@ import java.util.List;
 public class DataManager {
     private static DataManager instance;
     private List<ToDo> toDos = new ArrayList<>();
+    private List<ToDo> done = new ArrayList<>();
 
     private DataManager() {
     }
@@ -21,6 +22,11 @@ public class DataManager {
             }
         }
         return instance;
+    }
+
+    public List<ToDo> getDone() {
+        Collections.sort(this.done, ToDo::compareTo);
+        return this.done;
     }
 
     public List<ToDo> getToDos() {
@@ -41,6 +47,14 @@ public class DataManager {
             }
         }
         this.toDos = toDos;
+        return getToDos();
+    }
+
+    public List<ToDo> markAsDone(ToDo toDo){
+        if(toDos.contains(toDo)){
+            done.add(toDo);
+            removeToDo(toDo);
+        }
         return getToDos();
     }
 

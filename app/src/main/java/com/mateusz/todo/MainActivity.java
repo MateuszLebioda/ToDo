@@ -1,11 +1,14 @@
 package com.mateusz.todo;
 
 import com.mateusz.todo.activity.AddNewTodo;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout contentLayout;
     private DataManager dataManager = DataManager.getInstance();
     private FloatingActionButton addNewToDoButton;
+    private TextView emptyListLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initFields() {
         contentLayout = findViewById(R.id.contentLayout);
+        emptyListLabel = findViewById(R.id.emptyListLabel);
         addNewToDoButton = findViewById(R.id.addNewToDoButton);
         addNewToDoButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, AddNewTodo.class);
@@ -42,6 +47,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void initView() {
+
+        if(dataManager.getToDos().size() == 0 ){
+            emptyListLabel.setVisibility(View.VISIBLE);
+        }else {
+            emptyListLabel.setVisibility(View.GONE);
+        }
+
         int index = 0;
         contentLayout.removeAllViews();
         for (ToDo toDo : dataManager.getToDos()) {
@@ -54,6 +66,13 @@ public class MainActivity extends AppCompatActivity {
             });
 
             TextView toDoName = frame.findViewById(R.id.toDoName);
+            frame.findViewById(R.id.isDone).setOnClickListener(v -> {
+                dataManager.markAsDone(toDo);
+                initView();
+                Toast.makeText(this, "Pomyślnie oznaczone zadanie jako wykonane", Toast.LENGTH_SHORT).show();
+
+            });
+
             toDoName.setText(toDo.getName());
             frame.setId(index);
             contentLayout.addView(frame);
