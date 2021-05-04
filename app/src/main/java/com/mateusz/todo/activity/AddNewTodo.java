@@ -206,8 +206,8 @@ public class AddNewTodo extends AppCompatActivity implements DatePickerDialog.On
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        deadlineDate = LocalDate.of(year,month-1,dayOfMonth);
-        editTextDate.setText(LocalDate.of(year, month-1, dayOfMonth).toString());
+        deadlineDate = LocalDate.of(year,month+1,dayOfMonth);
+        editTextDate.setText(LocalDate.of(year, month+1, dayOfMonth).toString());
         clearDate.setClickable(true);
     }
 

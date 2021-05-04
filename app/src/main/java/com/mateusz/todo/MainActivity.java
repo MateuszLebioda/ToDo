@@ -1,23 +1,29 @@
 package com.mateusz.todo;
 
-import com.mateusz.todo.activity.AddNewTodo;
-
+import android.app.Notification;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.mateusz.todo.activity.AddNewTodo;
 import com.mateusz.todo.activity.Mode;
+import com.mateusz.todo.chanels.Channels;
 import com.mateusz.todo.data.DataManager;
 import com.mateusz.todo.model.ToDo;
+
+import org.threeten.bp.LocalDate;
+
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -27,12 +33,15 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton addNewToDoButton;
     private TextView emptyListLabel;
 
+    private NotificationManagerCompat notificationManagerCompat;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        notificationManagerCompat = NotificationManagerCompat.from(this);
         initFields();
+        handleNotification();
         initView();
     }
 
@@ -45,6 +54,29 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("mode", Mode.ADD);
             startActivity(intent);
         });
+    }
+
+    private void handleNotification(){
+        List<ToDo> todos = dataManager.getToDos();
+        int counter = 0;
+        LocalDate today = LocalDate.now();
+        for(ToDo todo :todos){
+            if(todo.getTerm() != null && todo.getTerm().toLocalDate().equals(today)){
+                counter++;
+            }
+        }
+        if(counter>0){
+            Notification notification = new NotificationCompat.Builder(this, Channels.CHANEL_ID)
+                    .setSmallIcon(R.drawable.ic_baseline_campaign_24)
+                    .setContentTitle("Lista zadań które powinieneś zrobić ostatecznie dzisiaj")
+                    .setContentText("Na dziś masz zaplanowanych do zrobienia " + counter + " zadań." )
+                    .setPriority(NotificationCompat.PRIORITY_HIGH).build();
+
+            notificationManagerCompat.notify(1,notification);
+        }else {
+            notificationManagerCompat.cancelAll();
+        }
+
     }
 
 
@@ -85,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
             index++;
         }
     }
+
+
 
 
 }
