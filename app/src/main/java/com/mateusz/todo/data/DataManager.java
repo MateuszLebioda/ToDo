@@ -4,6 +4,7 @@ import com.mateusz.todo.model.ToDo;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class DataManager {
@@ -30,7 +31,6 @@ public class DataManager {
     }
 
     public List<ToDo> getToDos() {
-        Collections.sort(this.toDos, ToDo::compareTo);
         return this.toDos;
     }
 
@@ -56,6 +56,11 @@ public class DataManager {
             removeToDo(toDo);
         }
         return getToDos();
+    }
+
+    public List<ToDo> sortList(Comparator<ToDo> comparator){
+        Collections.sort(this.toDos, comparator);
+        return this.toDos;
     }
 
 }
