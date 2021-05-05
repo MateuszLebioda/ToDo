@@ -63,4 +63,12 @@ public class DataManager {
         return this.toDos;
     }
 
+    public ToDo getToDoById(int id) {
+        for(ToDo toDo: this.toDos){
+            if(toDo.getId() == id){
+                return toDo;
+            }
+        }
+        return null;
+    }
 }

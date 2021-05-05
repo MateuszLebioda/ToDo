@@ -1,9 +1,13 @@
 package com.mateusz.todo.model;
 
+import android.graphics.Bitmap;
+
 import org.threeten.bp.LocalDateTime;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 import lombok.Builder;
@@ -13,12 +17,17 @@ import lombok.Data;
 @Builder
 @Data
 public class ToDo implements Comparable, Serializable {
+
+    private static int idSequence = 0;
+
+    private int id;
     private String name;
     private LocalDateTime created;
     private LocalDateTime term;
     private boolean done;
     private boolean priority;
-    private Attachment attachment;
+    @Builder.Default
+    private List<Bitmap> attachment = new ArrayList<>();
 
     public static ToDoBuilder builder() {
         return new CustomToDoBuilder();
@@ -45,6 +54,7 @@ public class ToDo implements Comparable, Serializable {
         @Override
         public ToDo build() {
             created(LocalDateTime.now());
+            id(++idSequence);
             return super.build();
         }
     }
@@ -58,8 +68,7 @@ public class ToDo implements Comparable, Serializable {
                 priority == toDo.priority &&
                 Objects.equals(name, toDo.name) &&
                 Objects.equals(created, toDo.created) &&
-                Objects.equals(term, toDo.term) &&
-                Objects.equals(attachment, toDo.attachment);
+                Objects.equals(term, toDo.term);
     }
 
     @Override

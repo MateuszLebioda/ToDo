@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             frame.findViewById(R.id.todoPanel).setOnClickListener(v -> {
                 Intent intent = new Intent(this, AddNewTodo.class);
                 intent.putExtra("mode", Mode.EDIT);
-                intent.putExtra("todo", toDo);
+                intent.putExtra("todoId", toDo.getId());
                 startActivity(intent);
             });
 
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        ((TextView) view).setText(null);
+        ((TextView) view).setText("");
         String option = parent.getItemAtPosition(position).toString();
         switch (option) {
             case "Priorytet":

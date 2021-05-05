@@ -113,6 +113,23 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/attachmentLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Załączniki"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <GridView
+            android:id="@+id/gridAttachmentView"
+            android:layout_width="match_parent"
+            android:layout_height="355dp"
+            android:numColumns="2"
+            android:gravity="center">
+        </GridView>
+
 
     </LinearLayout>
 
@@ -129,6 +146,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/outline_done_black_24dp" />
 
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addAttachment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="15sp"
+        android:layout_marginBottom="85sp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_baseline_camera_alt_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/submitEditedToDoButton"
