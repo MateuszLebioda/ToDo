@@ -13,7 +13,6 @@ import java.util.Objects;
 import lombok.Builder;
 import lombok.Data;
 
-
 @Builder
 @Data
 public class ToDo implements Comparable, Serializable {

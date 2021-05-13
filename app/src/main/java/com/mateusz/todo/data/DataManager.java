@@ -1,6 +1,7 @@
 package com.mateusz.todo.data;
 
 import com.mateusz.todo.model.ToDo;
+import com.mateusz.todo.service.Mapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +12,7 @@ public class DataManager {
     private static DataManager instance;
     private List<ToDo> toDos = new ArrayList<>();
     private List<ToDo> done = new ArrayList<>();
+    private boolean areDataInit = false;
 
     private DataManager() {
     }
@@ -18,9 +20,6 @@ public class DataManager {
     public static DataManager getInstance(){
         if (instance == null) {
             instance = new DataManager();
-            for (int i = 0; i <= 4; i++) {
-                instance.addToDo(ToDo.builder().name("Przykładowe zadanie numer " + i).build());
-            }
         }
         return instance;
     }
@@ -70,5 +69,17 @@ public class DataManager {
             }
         }
         return null;
+    }
+
+    public void initData(List<ToDo> toDos){
+
+        if(!areDataInit){
+            for(ToDo todo: toDos){
+                todo.setAttachment(new ArrayList<>());
+            }
+            this.toDos = toDos;
+            this.areDataInit = true;
+        }
+
     }
 }

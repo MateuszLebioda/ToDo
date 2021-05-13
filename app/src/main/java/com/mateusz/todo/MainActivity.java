@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -26,18 +27,31 @@ import com.mateusz.todo.comparators.NameComparator;
 import com.mateusz.todo.comparators.PriorityComparator;
 import com.mateusz.todo.data.DataManager;
 import com.mateusz.todo.model.ToDo;
+import com.mateusz.todo.service.Mapper;
 
 import org.threeten.bp.LocalDate;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    private static  final String STORE = "store.txt";
+
     private LinearLayout contentLayout;
     private DataManager dataManager = DataManager.getInstance();
     private FloatingActionButton addNewToDoButton;
     private TextView emptyListLabel;
+    private ImageButton shareButton;
 
     private Spinner sortSpinner;
 
@@ -45,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        fetchData();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         notificationManagerCompat = NotificationManagerCompat.from(this);
@@ -67,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             intent.putExtra("mode", Mode.ADD);
             startActivity(intent);
         });
+        saveData();
     }
 
     private void handleNotification() {
@@ -153,5 +169,32 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    private void saveData(){
+        try (FileOutputStream fos = openFileOutput(STORE, MODE_PRIVATE)) {
+            fos.write(Mapper.mapToDosToText(dataManager.getToDos()).getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void fetchData(){
+        try (FileInputStream fis = openFileInput(STORE)) {
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+
+            String text;
+
+            while((text=bufferedReader.readLine()) != null){
+                sb.append(text).append("\n");
+            }
+
+            dataManager.initData(new ArrayList<>(Arrays.asList(Mapper.mapTextToToDo(sb.toString()))));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
